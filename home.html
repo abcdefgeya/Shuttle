@@ -1,0 +1,58 @@
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - GO TRIP</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">GO TRIP</div>
+</div>
+
+<!-- hero section with travel image -->
+<div class="hero">
+    <img src="../travel.jpg" alt="Travel" />
+</div>
+
+<div class="auth-wrapper">
+    <div class="card">
+        <h2>Booking Shuttle 🚐</h2>
+
+        <button class="btn-main" onclick="goBooking()">
+            📱 Pesan Tiket
+        </button>
+
+        <button class="btn-main" onclick="window.open('https://wa.me/6285721252630', '_blank')" style="margin-top: 15px;">
+            Customer Care
+        </button>
+    </div>
+</div>
+
+<script>
+// KE LOGIN
+function goLogin(){
+    window.location.href = "login.html";
+}
+
+// LOGOUT
+function logout(){
+    localStorage.removeItem("login");
+    window.location.href = "login.html";
+}
+
+// BOOKING (WAJIB LOGIN)
+function goBooking(){
+    let isLogin = localStorage.getItem("login");
+
+    if(isLogin == "true"){
+        window.location.href = "booking.html";
+    } else {
+        window.location.href = "login.html";
+    }
+}
+</script>
+
+</body>
+</html>

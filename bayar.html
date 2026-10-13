@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pembayaran</title>
+<link rel="stylesheet" href="../style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body {
+    background: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%); /* blue-white gradient */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .payment-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-width: 600px;
+    width: 100%;
+    padding: 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .header h1 {
+    color: #2196f3; /* blue instead of purple */
+    margin: 0 0 10px 0;
+    font-size: 28px;
+  }
+
+  .header p {
+    color: #999;
+    margin: 0;
+  }
+
+  .summary-box {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .summary-row span:first-child {
+    color: #666;
+  }
+
+  .summary-row span:last-child {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .summary-total {
+    border-top: 2px solid #ddd;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    color: #667eea;
+    font-weight: bold;
+  }
+
+  .form-section {
+    margin-bottom: 30px;
+  }
+
+  .form-section h3 {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  .payment-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .method-btn {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .method-btn:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+  }
+
+  .method-btn.active {
+    border-color: #667eea;
+    background: #f0f4ff;
+    color: #667eea;
+  }
+
+  .method-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .bank-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .bank-option {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .bank-option:hover {
+    border-color: #667eea;
+  }
+
+  .bank-option.selected {
+    border-color: #667eea;
+    background: #f0f4ff;
+  }
+
+  .bank-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .bank-account {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .qr-container {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  #qrcode {
+    display: inline-block;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+  }
+
+  .qr-info {
+    margin-top: 15px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .btn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .btn-back {
+    background: #ddd;
+    color: #333;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+
+  .btn-back:hover {
+    background: #ccc;
+  }
+
+  .btn-bayar {
+    background: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%);
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s;
+  }
+
+  .btn-bayar:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-bayar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .info-text {
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="payment-container">
+  <div class="header">
+    <h1>Pembayaran Tiket</h1>
+    <p>Selesaikan pembayaran Anda</p>
+  </div>
+
+  <!-- Ringkasan Booking -->
+  <div class="summary-box">
+    <div class="summary-row">
+      <span>Rute Perjalanan</span>
+      <span id="summary-rute">-</span>
+    </div>
+    <div class="summary-row">
+      <span>Tanggal Berangkat</span>
+      <span id="summary-tanggal">-</span>
+    </div>
+    <div class="summary-row">
+      <span>Waktu</span>
+      <span id="summary-waktu">-</span>
+    </div>
+    <div class="summary-row">
+      <span>Nomor Kursi</span>
+      <span id="summary-kursi">-</span>
+    </div>
+    <div class="summary-row">
+      <span>Harga Tiket</span>
+      <span id="summary-harga">-</span>
+    </div>
+    
+    <!-- Promo Code Section -->
+    <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid #ddd;">
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <input type="text" id="promo-code" placeholder="Masukkan kode promo" 
+               style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <button onclick="validasiPromo()" 
+                style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+          Gunakan
+        </button>
+        <!-- tombol info promo -->
+        <button type="button" onclick="showPromoRules()" 
+                title="Lihat aturan promo otomatis" 
+                style="background:none;border:none;cursor:pointer;font-size:18px;color:#666;line-height:1;margin-left:5px;">
+          ⋮
+        </button>
+      </div>
+      <div id="promo-info" style="font-size: 12px; color: #666; margin-bottom: 10px; display: none;">
+        <p id="promo-message"></p>
+      </div>
+    </div>
+
+    <div class="summary-row" id="diskon-row" style="margin-top: 10px; display: none; color: #28a745;">
+      <span>Diskon</span>
+      <span id="summary-diskon">- Rp 0</span>
+    </div>
+    <div id="promo-detail" style="margin-top: 10px; display: none; font-size: 12px; color: #666; padding: 10px; background: #f0f0f0; border-radius: 6px;">
+      <p style="margin: 0; margin-bottom: 5px;"><strong>Detail Diskon:</strong></p>
+      <p id="promo-min" style="margin: 5px 0;">Minimal Pembelian: -</p>
+      <p id="promo-potongan" style="margin: 5px 0;">Potongan: -</p>
+    </div>
+    
+    <div class="summary-total">
+      <span>Total Pembayaran</span>
+      <span id="summary-total">Rp 0</span>
+    </div>
+  </div>
+
+  <!-- Form Data Penumpang -->
+  <form id="payment-form" onsubmit="prosesProses(event)">
+    <div class="form-section">
+      <h3>Data Penumpang</h3>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="nama" required>
+      </div>
+      <div class="form-group">
+        <label>Nomor Telepon</label>
+        <input type="tel" id="telp" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" required>
+      </div>
+    </div>
+
+      <!-- Pilih Metode Pembayaran -->
+    <div class="form-section">
+      <h3>Metode Pembayaran</h3>
+      <div class="payment-methods">
+        <button type="button" class="method-btn active" onclick="pilihMetode('bank')">
+          <div class="method-icon">🏦</div>
+          <div>Transfer Bank</div>
+        </button>
+        <button type="button" class="method-btn" onclick="pilihMetode('ewallet')">
+          <div class="method-icon">📱</div>
+          <div>E-Wallet</div>
+        </button>
+        <button type="button" class="method-btn" onclick="pilihMetode('qris')">
+          <div class="method-icon">🔲</div>
+          <div>QRIS</div>
+        </button>
+      </div>
+
+      <!-- Bank Transfer -->
+      <div id="bank-section">
+        <label style="display: block; margin-bottom: 15px; font-weight: 500; color: #333;">Pilih Bank</label>
+        <div class="bank-list">
+          <div class="bank-option" onclick="pilihBank(this, 'BCA')">
+            <div class="bank-name">🏦 BCA</div>
+            <div class="bank-account">1234567890</div>
+          </div>
+          <div class="bank-option" onclick="pilihBank(this, 'Mandiri')">
+            <div class="bank-name">🏦 Mandiri</div>
+            <div class="bank-account">9876543210</div>
+          </div>
+          <div class="bank-option" onclick="pilihBank(this, 'BNI')">
+            <div class="bank-name">🏦 BNI</div>
+            <div class="bank-account">1111222233</div>
+          </div>
+          <div class="bank-option" onclick="pilihBank(this, 'CIMB')">
+            <div class="bank-name">🏦 CIMB Niaga</div>
+            <div class="bank-account">5555666677</div>
+          </div>
+        </div>
+        <div class="info-text">Setelah memilih bank, lakukan transfer dan upload bukti pembayaran</div>
+      </div>
+
+      <!-- E-Wallet -->
+      <div id="ewallet-section" class="hidden">
+        <label style="display: block; margin-bottom: 15px; font-weight: 500; color: #333;">Pilih E-Wallet</label>
+        <div class="bank-list">
+          <div class="bank-option" onclick="pilihEWallet(this, 'DANA')">
+            <div class="bank-name">💜 DANA</div>
+            <div class="bank-account">Dompet Digital</div>
+          </div>
+          <div class="bank-option" onclick="pilihEWallet(this, 'OVO')">
+            <div class="bank-name">🟣 OVO</div>
+            <div class="bank-account">E-Money OVO</div>
+          </div>
+          <div class="bank-option" onclick="pilihEWallet(this, 'ShopeePay')">
+            <div class="bank-name">🔴 ShopeePay</div>
+            <div class="bank-account">ShopeePayment</div>
+          </div>
+          <div class="bank-option" onclick="pilihEWallet(this, 'GCash')">
+            <div class="bank-name">🟢 GCash</div>
+            <div class="bank-account">Digital Wallet</div>
+          </div>
+          <div class="bank-option" onclick="pilihEWallet(this, 'Gopay')">
+            <div class="bank-name">🔵 Gopay</div>
+            <div class="bank-account">Gojek Payment</div>
+          </div>
+          <div class="bank-option" onclick="pilihEWallet(this, 'LinkAja')">
+            <div class="bank-name">🟠 LinkAja</div>
+            <div class="bank-account">Link Payment</div>
+          </div>
+        </div>
+        <div class="info-text">Anda akan dialihkan ke aplikasi e-wallet untuk melakukan pembayaran</div>
+      </div>
+
+      <!-- QRIS -->
+      <div id="qris-section" class="hidden">
+        <div class="qr-container">
+          <div id="qrcode"></div>
+          <div class="qr-info">
+            <p>Scan QR Code dengan aplikasi e-wallet Anda</p>
+            <p style="margin-top: 10px; font-weight: bold;">Total: Rp <span id="qris-amount">0</span></p>
+          </div>
+        </div>
+      </div>
+
+      <input type="hidden" id="selected-method">
+      <input type="hidden" id="selected-bank">
+      <input type="hidden" id="selected-ewallet">
+    </div>
+
+    <!-- Tombol -->
+    <div class="btn-container">
+      <button type="button" class="btn-back" onclick="kembaliKeKursi()">← Kembali</button>
+      <button type="submit" class="btn-bayar">Konfirmasi Pembayaran</button>
+    </div>
+  </form>
+</div>
+
+<script src="../app.js"></script>
+<script>
+  let selectedMethod = 'bank';
+  let selectedBank = null;
+  let selectedEWallet = null;
+
+  function loadPaymentData() {
+    const finalBooking = JSON.parse(localStorage.getItem('finalBooking'));
+    const currentSearch = JSON.parse(localStorage.getItem('currentSearch'));
+
+    if (!finalBooking || !currentSearch) {
+      alert("Data booking tidak ditemukan!");
+      window.location.href = "home.html";
+      return;
+    }
+
+    // Tampilkan ringkasan
+    document.getElementById('summary-rute').textContent = 
+      `${currentSearch.dari} → ${currentSearch.tujuan}`;
+    document.getElementById('summary-tanggal').textContent = currentSearch.tanggal;
+    document.getElementById('summary-waktu').textContent = 
+      `${finalBooking.jam_berangkat} - ${finalBooking.jam_tiba}`;
+    document.getElementById('summary-kursi').textContent = `Kursi ${finalBooking.kursi}`;
+    document.getElementById('summary-harga').textContent = 
+      `Rp ${finalBooking.harga.toLocaleString('id-ID')}`;
+    document.getElementById('summary-total').textContent = 
+      `Rp ${finalBooking.harga.toLocaleString('id-ID')}`;
+    document.getElementById('qris-amount').textContent = 
+      finalBooking.harga.toLocaleString('id-ID');
+
+    // Siapkan QRIS
+    setTimeout(() => {
+      generateQRCode(finalBooking.harga);
+    }, 100);
+
+    // cek promo otomatis (loyalitas / Kamis12)
+    applyAutomaticPromos();
+  }
+
+  function pilihMetode(metode) {
+    selectedMethod = metode;
+    document.getElementById('selected-method').value = metode;
+
+    // Update button styling
+    document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.closest('.method-btn').classList.add('active');
+
+    // Toggle section
+    if (metode === 'bank') {
+      document.getElementById('bank-section').classList.remove('hidden');
+      document.getElementById('ewallet-section').classList.add('hidden');
+      document.getElementById('qris-section').classList.add('hidden');
+      selectedBank = null;
+      selectedEWallet = null;
+    } else if (metode === 'ewallet') {
+      document.getElementById('bank-section').classList.add('hidden');
+      document.getElementById('ewallet-section').classList.remove('hidden');
+      document.getElementById('qris-section').classList.add('hidden');
+      selectedBank = null;
+      selectedEWallet = null;
+    } else if (metode === 'qris') {
+      document.getElementById('bank-section').classList.add('hidden');
+      document.getElementById('ewallet-section').classList.add('hidden');
+      document.getElementById('qris-section').classList.remove('hidden');
+      selectedBank = null;
+      selectedEWallet = null;
+    }
+  }
+
+  function pilihBank(element, bankName) {
+    selectedBank = bankName;
+    document.getElementById('selected-bank').value = bankName;
+
+    // Update styling
+    document.querySelectorAll('.bank-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+
+  function pilihEWallet(element, ewalletName) {
+    selectedEWallet = ewalletName;
+    document.getElementById('selected-ewallet').value = ewalletName;
+
+    // Update styling
+    document.querySelectorAll('#ewallet-section .bank-option').forEach(opt => opt.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+
+  function generateQRCode(amount) {
+    const qrcodeDiv = document.getElementById('qrcode');
+    qrcodeDiv.innerHTML = ''; // Clear previous
+
+    // Generate QR code data
+    const qrData = `QRIS_PEMBAYARAN_${amount}_IDR_SHUTTLE`;
+
+    new QRCode(qrcodeDiv, {
+      text: qrData,
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  function prosesProses(event) {
+    event.preventDefault();
+
+    const nama = document.getElementById('nama').value;
+    const telp = document.getElementById('telp').value;
+    const email = document.getElementById('email').value;
+
+    if (!nama || !telp || !email) {
+      alert("Silakan isi nama lengkap, nomor telepon, dan email!");
+      return;
+    }
+
+    if (selectedMethod === 'bank' && !selectedBank) {
+      alert("Silakan pilih bank untuk transfer!");
+      return;
+    }
+
+    if (selectedMethod === 'ewallet' && !selectedEWallet) {
+      alert("Silakan pilih e-wallet untuk pembayaran!");
+      return;
+    }
+
+    // Simpan data penumpang
+    const finalBooking = JSON.parse(localStorage.getItem('finalBooking'));
+    const currentSearch = JSON.parse(localStorage.getItem('currentSearch'));
+    const selectedPromo = JSON.parse(localStorage.getItem('selectedPromo'));
+    
+    let hargaFinal = finalBooking.harga;
+    if (selectedPromo) {
+      hargaFinal = finalBooking.harga - selectedPromo.diskon;
+    }
+
+    // Generate kode pembayaran (untuk bank dan ewallet)
+    const isPaymentMethod = selectedMethod === 'bank' || selectedMethod === 'ewallet';
+    const kodePembayaran = isPaymentMethod ? 
+      'BAYAR' + Date.now().toString().slice(-8) : 
+      'QRIS' + Date.now().toString().slice(-8);
+
+    // Set status: unpaid untuk bank/ewallet, paid untuk QRIS (instant)
+    const statusPembayaran = selectedMethod === 'qris' ? 'paid' : 'unpaid';
+    
+    const pesananData = {
+      ...finalBooking,
+      dari: currentSearch.dari,
+      tujuan: currentSearch.tujuan,
+      nama: nama,
+      telp: telp,
+      email: email,
+      metode_bayar: selectedMethod,
+      bank: selectedBank || '-',
+      ewallet: selectedEWallet || '-',
+      status: statusPembayaran,
+      harga_asli: finalBooking.harga,
+      diskon: selectedPromo ? selectedPromo.diskon : 0,
+      kode_promo: selectedPromo ? selectedPromo.kode : '-',
+      harga_final: hargaFinal,
+      kode_pesanan: 'SHUTTLE' + Math.floor(Math.random() * 1000000),
+      kode_pembayaran: kodePembayaran,
+      waktu_pesan: new Date().toISOString()
+    };
+
+    // Simpan ke pesanan
+    let pesanan = JSON.parse(localStorage.getItem('pesanan')) || [];
+    pesanan.push(pesananData);
+    localStorage.setItem('pesanan', JSON.stringify(pesanan));
+
+    // Clear temporary storage
+    localStorage.removeItem('currentSearch');
+    localStorage.removeItem('selectedJadwal');
+    localStorage.removeItem('selectedKursi');
+    localStorage.removeItem('bookingData');
+    localStorage.removeItem('finalBooking');
+    localStorage.removeItem('selectedPromo');
+
+    // Format metode pembayaran dan tampilkan pesan
+    let metodeText = '';
+    let pesanTambahan = '';
+    if (selectedMethod === 'bank') {
+      metodeText = 'Transfer Bank (' + selectedBank + ')';
+      pesanTambahan = `\n\nKode Pembayaran: ${kodePembayaran}\n⏰ Selesaikan pembayaran dalam 1 jam!`;
+    } else if (selectedMethod === 'ewallet') {
+      metodeText = 'E-Wallet (' + selectedEWallet + ')';
+      pesanTambahan = `\n\nKode Pembayaran: ${kodePembayaran}\n⏰ Selesaikan pembayaran dalam 1 jam!`;
+    } else {
+      metodeText = 'QRIS';
+      pesanTambahan = '\n✓ Pembayaran berhasil diproses!';
+    }
+
+    // Redirect ke status/tiket
+    alert(`Pesanan berhasil!\nKode Pesanan: ${pesananData.kode_pesanan}\n\nMetode Pembayaran: ${metodeText}${pesanTambahan}\n\nTerima kasih telah memesan tiket!`);
+    window.location.href = "status.html";
+  }
+
+  function kembaliKeKursi() {
+    window.location.href = "kursi.html";
+  }
+
+  // tampilkan aturan promo otomatis
+  function showPromoRules() {
+    alert("Aturan promo:\n\n" +
+          "• Setiap 3 kali pemesanan berturut-turut, Anda akan mendapatkan diskon otomatis 20%.\n" +
+          "• Setiap hari Kamis pukul 12 siang tersedia diskon otomatis 10%.\n" +
+          "Diskon otomatis akan diterapkan saat Anda membuka halaman pembayaran dan terlihat di sini.");
+  }
+
+  // Load data saat halaman dibuka
+  window.onload = loadPaymentData;
+</script>
+</body>
+</html>

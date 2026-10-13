@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tiket Perjalanan</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .tiket-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-width: 600px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .tiket-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .tiket-header h1 {
+    margin: 0 0 5px 0;
+    font-size: 26px;
+  }
+
+  .tiket-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+
+  .tiket-body {
+    padding: 30px;
+  }
+
+  .kode-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 25px;
+    border: 2px dashed #667eea;
+  }
+
+  .kode-label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .kode-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #667eea;
+    font-family: monospace;
+    letter-spacing: 1px;
+  }
+
+  .rute-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f0f7ff;
+    border-radius: 8px;
+  }
+
+  .lokasi {
+    text-align: center;
+    flex: 1;
+  }
+
+  .lokasi-kota {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .lokasi-waktu {
+    font-size: 12px;
+    color: #999;
+    margin-top: 5px;
+  }
+
+  .rute-line {
+    flex: 1;
+    height: 2px;
+    background: #667eea;
+    margin: 0 20px;
+    position: relative;
+  }
+
+  .rute-line::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 20px;
+    color: #667eea;
+  }
+
+  .detail-section {
+    margin-bottom: 25px;
+  }
+
+  .detail-title {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .detail-list {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+
+  .detail-item:last-child {
+    border-bottom: none;
+  }
+
+  .detail-item span:first-child {
+    color: #666;
+  }
+
+  .detail-item span:last-child {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .barcode-section {
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .barcode-title {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+  }
+
+  #barcode {
+    display: inline-block;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+  }
+
+  .notes {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    font-size: 13px;
+    color: #2e7d32;
+    margin-bottom: 20px;
+  }
+
+  .btn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+
+  .btn-primary {
+    background: #667eea;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .btn-secondary:hover {
+    background: #e0e0e0;
+  }
+
+  @media print {
+    body {
+      background: white;
+    }
+    .tiket-container {
+      box-shadow: none;
+      max-width: 100%;
+    }
+    .btn-container {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body onload="tampilTiket()">
+
+<div class="tiket-container">
+  <div class="tiket-header">
+    <h1>🎫 E-Tiket Perjalanan</h1>
+    <p>SHUTTLE Bus Transport</p>
+  </div>
+
+  <div class="tiket-body">
+    <div class="kode-box">
+      <div class="kode-label">Nomor Tiket</div>
+      <div class="kode-value" id="tiket-kode">SHUTTLE000000</div>
+    </div>
+
+    <div class="rute-section">
+      <div class="lokasi">
+        <div class="lokasi-kota" id="tiket-dari">Bandung</div>
+        <div class="lokasi-waktu" id="tiket-jam-dari">08:00</div>
+      </div>
+      <div class="rute-line"></div>
+      <div class="lokasi">
+        <div class="lokasi-kota" id="tiket-tujuan">Jakarta</div>
+        <div class="lokasi-waktu" id="tiket-jam-tujuan">11:00</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-title">Informasi Penumpang</div>
+      <div class="detail-list">
+        <div class="detail-item">
+          <span>Nama Penumpang</span>
+          <span id="tiket-nama">-</span>
+        </div>
+        <div class="detail-item">
+          <span>Tanggal Berangkat</span>
+          <span id="tiket-tanggal">-</span>
+        </div>
+        <div class="detail-item">
+          <span>Nomor Kursi</span>
+          <span id="tiket-kursi">-</span>
+        </div>
+        <div class="detail-item">
+          <span>No. Telepon</span>
+          <span id="tiket-telp">-</span>
+        </div>
+        <div class="detail-item">
+          <span>Email</span>
+          <span id="tiket-email">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-title">Rincian Pembayaran</div>
+      <div class="detail-list">
+        <div class="detail-item">
+          <span>Harga Tiket</span>
+          <span id="tiket-harga-asli">Rp 0</span>
+        </div>
+        <div class="detail-item" id="tiket-diskon-info-item" style="display: none;">
+          <span>Kode Diskon</span>
+          <span id="tiket-kode-diskon" style="color: #007bff;">-</span>
+        </div>
+        <div class="detail-item" id="tiket-diskon-min-item" style="display: none;">
+          <span>Minimum Pembelian</span>
+          <span id="tiket-diskon-min" style="color: #666;">Rp 0</span>
+        </div>
+        <div class="detail-item" id="tiket-diskon-item" style="display: none;">
+          <span>Potongan Harga</span>
+          <span id="tiket-diskon" style="color: #28a745;">- Rp 0</span>
+        </div>
+        <div class="detail-item" style="margin-top: 10px; padding-top: 10px; border-top: 2px solid #ddd; font-size: 16px;">
+          <span><strong>Total Pembayaran</strong></span>
+          <span id="tiket-total" style="color: #667eea;">Rp 0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="barcode-section">
+      <div class="barcode-title">Barcode (Scan saat Check-In)</div>
+      <div id="barcode"></div>
+    </div>
+
+    <div class="notes">
+      <strong>📌 Catatan Penting:</strong>
+      <p style="margin: 10px 0 0 0;">• Tunjukkan e-tiket ini saat check-in<br/>• Datang 30 menit sebelum keberangkatan<br/>• Barang bawaan sesuai peraturan</p>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn btn-secondary" onclick="kembaliHome()">← Kembali</button>
+      <button class="btn btn-primary" onclick="cetakTiket()">🖨️ Cetak Tiket</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="../app.js"></script>
+<script>
+  function tampilTiket() {
+    const pesanan = JSON.parse(localStorage.getItem('pesanan')) || [];
+    
+    if (pesanan.length === 0) {
+      window.location.href = "home.html";
+      return;
+    }
+
+    const terakhir = pesanan[pesanan.length - 1];
+
+    // Informasi Tiket
+    document.getElementById('tiket-kode').textContent = terakhir.kode_pesanan;
+    document.getElementById('tiket-dari').textContent = terakhir.dari;
+    document.getElementById('tiket-tujuan').textContent = terakhir.tujuan;
+    document.getElementById('tiket-jam-dari').textContent = terakhir.jam_berangkat;
+    document.getElementById('tiket-jam-tujuan').textContent = terakhir.jam_tiba;
+    document.getElementById('tiket-tanggal').textContent = terakhir.tanggal;
+    document.getElementById('tiket-kursi').textContent = `Kursi ${terakhir.kursi}`;
+    document.getElementById('tiket-telp').textContent = terakhir.telp;
+    document.getElementById('tiket-email').textContent = terakhir.email;
+    
+    // Nama Penumpang
+    const namaPenumpang = terakhir.nama || '-';
+    document.getElementById('tiket-nama').textContent = namaPenumpang;
+
+    // Harga
+    const hargaAsli = terakhir.harga_asli || terakhir.harga;
+    const hargaFinal = terakhir.harga_final || hargaAsli;
+    const diskon = terakhir.diskon || 0;
+
+    document.getElementById('tiket-harga-asli').textContent = `Rp ${hargaAsli.toLocaleString('id-ID')}`;
+    document.getElementById('tiket-total').textContent = `Rp ${hargaFinal.toLocaleString('id-ID')}`;
+
+    // Tampilkan informasi diskon jika ada
+    if (diskon > 0) {
+      const selectedPromo = JSON.parse(localStorage.getItem('selectedPromo'));
+      
+      if (selectedPromo) {
+        document.getElementById('tiket-diskon-info-item').style.display = 'flex';
+        document.getElementById('tiket-kode-diskon').textContent = selectedPromo.kode;
+        
+        document.getElementById('tiket-diskon-min-item').style.display = 'flex';
+        document.getElementById('tiket-diskon-min').textContent = `Rp ${selectedPromo.minimal_pembelian.toLocaleString('id-ID')}`;
+      }
+      
+      document.getElementById('tiket-diskon-item').style.display = 'flex';
+      document.getElementById('tiket-diskon').textContent = `- Rp ${diskon.toLocaleString('id-ID')}`;
+    }
+
+    // Generate QR Code
+    const qrcodeDiv = document.getElementById('barcode');
+    const qrData = `SHUTTLE_${terakhir.kode_pesanan}_${terakhir.dari}_${terakhir.tujuan}_${terakhir.tanggal}`;
+    
+    new QRCode(qrcodeDiv, {
+      text: qrData,
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+
+  function cetakTiket() {
+    window.print();
+  }
+
+  function kembaliHome() {
+    window.location.href = "home.html";
+  }
+</script>
+</body>
+</html>

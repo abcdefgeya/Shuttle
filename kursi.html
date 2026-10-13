@@ -1,0 +1,261 @@
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  .back-btn {
+    background: #6c757d;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .booking-info {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+  }
+  
+  .booking-info p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  .grid-kursi {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+    max-width: 400px;
+  }
+  
+  .seat {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  
+  .seat:hover {
+    border-color: #007bff;
+    background: #e3f2fd;
+  }
+  
+  .seat.selected {
+    background: #2196f3; /* blue when selected */
+    color: white;
+    border-color: #2196f3;
+  }
+  
+  .seat.booked {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    cursor: not-allowed;
+  }
+  
+  .seat.booked:hover {
+    border-color: #dc3545;
+    background: #dc3545;
+  }
+  
+  .keterangan {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .keterangan-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .keterangan-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    border: 2px solid #ddd;
+  }
+  
+  .keterangan-box.tersedia {
+    background: #f9f9f9;
+    border-color: #ddd;
+  }
+  
+  .keterangan-box.dipilih {
+    background: #28a745;
+    border-color: #28a745;
+  }
+  
+  .keterangan-box.dipesan {
+    background: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .selected-info {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #28a745;
+    margin: 20px 0;
+  }
+  
+  .btn-lanjut {
+    background: #2196f3; /* blue to match theme */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .btn-lanjut:hover {
+    background: #1976d2;
+  }
+  
+  .btn-lanjut:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+</style>
+
+<div class="p-5" style="display: flex; flex-direction: column; align-items: center;">
+  <button class="back-btn" onclick="kembaliKeJadwal()" style="align-self: flex-start; margin-bottom: 20px; width: auto;">← Kembali</button>
+  
+  <h2 style="text-align: center; width: 100%;">Pilih Kursi</h2>
+  
+  <div class="booking-info" style="max-width: 500px; width: 100%; margin-left: auto; margin-right: auto;">
+    <p><strong id="rute-info">Rute: -</strong></p>
+    <p><strong>Waktu:</strong> <span id="waktu-info">-</span></p>
+    <p><strong>Harga per Kursi:</strong> Rp <span id="harga-info">-</span></p>
+  </div>
+  
+  <div class="keterangan" style="max-width: 500px; width: 100%; justify-content: center; margin-left: auto; margin-right: auto; flex-wrap: wrap;">
+    <div class="keterangan-item">
+      <div class="keterangan-box tersedia"></div>
+      <span>Tersedia</span>
+    </div>
+    <div class="keterangan-item">
+      <div class="keterangan-box dipilih"></div>
+      <span>Dipilih</span>
+    </div>
+    <div class="keterangan-item">
+      <div class="keterangan-box dipesan"></div>
+      <span>Dipesan</span>
+    </div>
+  </div>
+  
+  <h3 style="text-align: center; width: 100%;">Denah Kursi (Pilih Kursi Anda)</h3>
+  <div class="grid-kursi" id="kursi-grid" style="margin-left: auto; margin-right: auto;"></div>
+  
+  <div id="selected-info" class="selected-info" style="display: none; max-width: 500px; width: 100%; margin-left: auto; margin-right: auto;">
+    <p><strong>Kursi Terpilih:</strong> <span id="selected-kursi">-</span></p>
+    <p><strong>Total Harga:</strong> Rp <span id="total-harga">-</span></p>
+  </div>
+  
+  <button class="btn-lanjut" id="btn-lanjut" onclick="lanjutKeBayar()" disabled style="max-width: 500px; width: 100%; margin-left: auto; margin-right: auto;">
+    Lanjut ke Pembayaran
+  </button>
+</div>
+
+<script src="../app.js"></script>
+<script>
+  function initKursi() {
+    const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+    
+    if (!bookingData) {
+      alert("Data booking tidak ditemukan!");
+      window.location.href = "home.html";
+      return;
+    }
+    
+    // Tampilkan informasi booking
+    document.getElementById('rute-info').textContent = 
+      `Rute: ${bookingData.dari} → ${bookingData.tujuan}`;
+    document.getElementById('waktu-info').textContent = 
+      `${bookingData.jam_berangkat} - ${bookingData.jam_tiba}`;
+    document.getElementById('harga-info').textContent = 
+      bookingData.harga.toLocaleString('id-ID');
+    
+    // Buat kursi 1-10
+    const kursiGrid = document.getElementById('kursi-grid');
+    kursiGrid.innerHTML = '';
+    
+    // Simulasi kursi yang sudah dipesan
+    const kursiDipesan = [3, 5, 8];
+    
+    for (let i = 1; i <= 10; i++) {
+      const kursiBtn = document.createElement('button');
+      kursiBtn.className = 'seat';
+      kursiBtn.textContent = i;
+      kursiBtn.id = 'kursi-' + i;
+      
+      if (kursiDipesan.includes(i)) {
+        kursiBtn.classList.add('booked');
+        kursiBtn.disabled = true;
+      } else {
+        kursiBtn.onclick = () => pilihKursi(i, bookingData.harga);
+      }
+      
+      kursiGrid.appendChild(kursiBtn);
+    }
+  }
+  
+  function pilihKursi(nomorKursi, harga) {
+    // Hapus seleksi sebelumnya
+    document.querySelectorAll('.seat.selected').forEach(seat => {
+      seat.classList.remove('selected');
+    });
+    
+    // Tandai kursi yang dipilih
+    document.getElementById('kursi-' + nomorKursi).classList.add('selected');
+    
+    // Simpan ke localStorage
+    localStorage.setItem('selectedKursi', nomorKursi);
+    
+    // Tampilkan info dan enable tombol
+    document.getElementById('selected-info').style.display = 'block';
+    document.getElementById('selected-kursi').textContent = nomorKursi;
+    document.getElementById('total-harga').textContent = harga.toLocaleString('id-ID');
+    document.getElementById('btn-lanjut').disabled = false;
+  }
+  
+  function kembaliKeJadwal() {
+    window.location.href = "booking.html";
+  }
+  
+  function lanjutKeBayar() {
+    const selectedKursi = localStorage.getItem('selectedKursi');
+    
+    if (!selectedKursi) {
+      alert("Silakan pilih kursi terlebih dahulu!");
+      return;
+    }
+    
+    // Simpan data untuk bayar page
+    const bookingData = JSON.parse(localStorage.getItem('bookingData'));
+    const finalData = {
+      ...bookingData,
+      kursi: selectedKursi
+    };
+    localStorage.setItem('finalBooking', JSON.stringify(finalData));
+    
+    window.location.href = "bayar.html";
+  }
+  
+  // Inisialisasi saat halaman dimuat
+  window.onload = initKursi;
+</script>

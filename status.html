@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Status Pesanan</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .status-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .header h1 {
+    color: #667eea;
+    margin: 0 0 10px 0;
+    font-size: 28px;
+  }
+
+  .header p {
+    color: #999;
+    margin: 0;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #fff3cd;
+    color: #856404;
+    border-radius: 20px;
+    margin: 20px 0;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .status-badge.success {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .detail-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #667eea;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .detail-row span:first-child {
+    color: #666;
+    font-weight: 500;
+  }
+
+  .detail-row span:last-child {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .kode-pesanan {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin: 20px 0;
+    border: 2px solid #667eea;
+  }
+
+  .kode-pesanan .label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  .kode-pesanan .value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #667eea;
+    font-family: monospace;
+    letter-spacing: 2px;
+  }
+
+  .btn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .btn-secondary:hover {
+    background: #e0e0e0;
+  }
+
+  .info-text {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    color: #2e7d32;
+    border-left: 4px solid #28a745;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body onload="tampilStatus()">
+
+<div class="status-container">
+  <div class="header">
+    <h1>Status Pesanan</h1>
+    <p>Pesanan Anda telah berhasil dibuat</p>
+  </div>
+
+  <div class="status-badge success">
+    ✓ Pesanan Dikonfirmasi
+  </div>
+
+  <!-- STATUS PEMBAYARAN -->
+  <div id="payment-status-box" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; display: none;">
+    <p style="margin: 0 0 10px 0;"><strong>⏰ Tahap Pembayaran</strong></p>
+    <p id="payment-status-text" style="margin: 5px 0; color: #856404; font-size: 14px;">-</p>
+    <div id="timer-countdown" style="font-size: 20px; font-weight: bold; color: #d63031; margin-top: 10px; display: none;">
+      Sisa Waktu: <span id="countdown-timer">1:00:00</span>
+    </div>
+    <p id="payment-code-text" style="margin: 15px 0 0 0; padding: 10px; background: white; border-radius: 6px; font-family: monospace; color: #333; font-weight: bold; text-align: center;">-</p>
+  </div>
+
+  <div class="kode-pesanan">
+    <div class="label">Kode Pesanan Anda</div>
+    <div class="value" id="kode-pesanan">SHUTTLE000000</div>
+  </div>
+
+  <div class="detail-box">
+    <div class="detail-row">
+      <span>Rute</span>
+      <span id="status-rute">-</span>
+    </div>
+    <div class="detail-row">
+      <span>Tanggal</span>
+      <span id="status-tanggal">-</span>
+    </div>
+    <div class="detail-row">
+      <span>Waktu</span>
+      <span id="status-waktu">-</span>
+    </div>
+    <div class="detail-row">
+      <span>Kursi</span>
+      <span id="status-kursi">-</span>
+    </div>
+    <div class="detail-row">
+      <span>Total Pembayaran</span>
+      <span id="status-harga">-</span>
+    </div>
+    <div class="detail-row" id="diskon-row" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+      <span>Diskon</span>
+      <span id="status-diskon" style="color: #28a745;">-</span>
+    </div>
+  </div>
+
+  <div class="info-text">
+    <strong>💡 Informasi Penting:</strong>
+    <p style="margin-top: 10px; margin-bottom: 0;">Tiket digital akan dikirim ke email Anda. Simpan kode pesanan ini untuk keperluan check-in.</p>
+  </div>
+
+  <div class="btn-container">
+    <button class="btn btn-secondary" onclick="kembaliHome()">Kembali Home</button>
+    <button class="btn btn-primary" onclick="lihatTiket()">Lihat Tiket</button>
+  </div>
+</div>
+
+<script src="../app.js"></script>
+<script>
+  let countdownInterval;
+
+  function tampilStatus() {
+    const pesanan = JSON.parse(localStorage.getItem('pesanan')) || [];
+    
+    if (pesanan.length === 0) {
+      window.location.href = "home.html";
+      return;
+    }
+
+    const terakhir = pesanan[pesanan.length - 1];
+
+    document.getElementById('kode-pesanan').textContent = terakhir.kode_pesanan;
+    document.getElementById('status-rute').textContent = `${terakhir.dari} → ${terakhir.tujuan}`;
+    document.getElementById('status-tanggal').textContent = terakhir.tanggal;
+    document.getElementById('status-waktu').textContent = `${terakhir.jam_berangkat} - ${terakhir.jam_tiba}`;
+    document.getElementById('status-kursi').textContent = `Kursi ${terakhir.kursi}`;
+    
+    // Tampilkan harga
+    const harga = terakhir.harga_final || terakhir.harga;
+    document.getElementById('status-harga').textContent = `Rp ${harga.toLocaleString('id-ID')}`;
+
+    // Tampilkan diskon jika ada
+    if (terakhir.diskon > 0) {
+      document.getElementById('diskon-row').style.display = 'flex';
+      document.getElementById('status-diskon').textContent = `- Rp ${terakhir.diskon.toLocaleString('id-ID')}`;
+    }
+
+    // CEK STATUS PEMBAYARAN
+    if (terakhir.status === 'unpaid') {
+      const paymentStatusBox = document.getElementById('payment-status-box');
+      const paymentCodeText = document.getElementById('payment-code-text');
+      const timerDiv = document.getElementById('timer-countdown');
+      
+      paymentStatusBox.style.display = 'block';
+      paymentCodeText.textContent = `Kode Pembayaran: ${terakhir.kode_pembayaran || '-'}`;
+      
+      // Hitung sisa waktu
+      const waktuPesan = new Date(terakhir.waktu_pesan);
+      const waktuExpire = new Date(waktuPesan.getTime() + 60 * 60 * 1000); // 1 jam dari sekarang
+      const sekarang = new Date();
+      
+      const sisaMiliseconds = waktuExpire - sekarang;
+      
+      if (sisaMiliseconds <= 0) {
+        // Pembayaran sudah expired
+        document.getElementById('payment-status-text').textContent = '❌ Pesanan Dibatalkan (Waktu pembayaran berakhir)';
+        timerDiv.style.display = 'none';
+        document.querySelector('.status-badge').style.background = '#f8d7da';
+        document.querySelector('.status-badge').style.color = '#721c24';
+        document.querySelector('.status-badge').textContent = '✗ Pesanan Dibatalkan';
+      } else {
+        // Masih menunggu pembayaran
+        const metode = terakhir.metode_bayar === 'bank' ? 'Transfer Bank' : terakhir.metode_bayar === 'ewallet' ? 'E-Wallet' : 'QRIS';
+        document.getElementById('payment-status-text').textContent = `⏳ Menunggu Pembayaran via ${metode}`;
+        timerDiv.style.display = 'block';
+        
+        // Mulai countdown timer
+        startCountdown(sisaMiliseconds);
+      }
+    }
+  }
+
+  function startCountdown(milliseconds) {
+    function updateTimer() {
+      const now = Date.now();
+      const endTime = new Date().getTime() + milliseconds;
+      
+      if (milliseconds <= 0) {
+        document.getElementById('countdown-timer').textContent = '0:00:00';
+        clearInterval(countdownInterval);
+        // Batalkan pesanan
+        cancelExpiredPayment();
+        return;
+      }
+      
+      const jam = Math.floor(milliseconds / (1000 * 60 * 60));
+      const menit = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+      const detik = Math.floor((milliseconds % (1000 * 60)) / 1000);
+      
+      document.getElementById('countdown-timer').textContent = 
+        `${jam}:${menit.toString().padStart(2, '0')}:${detik.toString().padStart(2, '0')}`;
+      
+      milliseconds -= 1000;
+    }
+
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  function cancelExpiredPayment() {
+    const pesanan = JSON.parse(localStorage.getItem('pesanan')) || [];
+    const terakhir = pesanan[pesanan.length - 1];
+    
+    if (terakhir.status === 'unpaid') {
+      terakhir.status = 'cancelled';
+      pesanan[pesanan.length - 1] = terakhir;
+      localStorage.setItem('pesanan', JSON.stringify(pesanan));
+      
+      // Update UI
+      document.getElementById('payment-status-text').textContent = '❌ Pesanan Dibatalkan (Waktu pembayaran berakhir)';
+      document.getElementById('timer-countdown').style.display = 'none';
+      document.querySelector('.status-badge').style.background = '#f8d7da';
+      document.querySelector('.status-badge').style.color = '#721c24';
+      document.querySelector('.status-badge').textContent = '✗ Pesanan Dibatalkan';
+    }
+  }
+
+  function kembaliHome() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    window.location.href = "home.html";
+  }
+
+  function lihatTiket() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    window.location.href = "tiket.html";
+  }
+</script>
+</body>
+</html>

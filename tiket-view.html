@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiket Perjalanan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .print-btn {
+            background: white;
+            color: #667eea;
+            px: 12px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .ticket-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .ticket {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .airline-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .ticket-title {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .divider {
+            border-top: 2px dashed rgba(255,255,255,0.3);
+            margin: 15px 0;
+        }
+
+        .ticket-code {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .ticket-code-label {
+            opacity: 0.8;
+            margin-bottom: 3px;
+        }
+
+        .ticket-code-value {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .ticket-body {
+            padding: 30px;
+        }
+
+        .journey-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .location {
+            flex: 1;
+            text-align: center;
+        }
+
+        .location-code {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .location-name {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .location-time {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .journey-arrow {
+            flex: 0.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            margin: 0 10px;
+        }
+
+        .arrow-line {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .duration {
+            font-size: 11px;
+            text-align: center;
+            color: #999;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .passenger-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .passenger-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .passenger-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #f3e5f5 100%);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .price-label {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .price-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .qr-section {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .qr-instruction {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .ticket-footer {
+            padding: 15px 30px;
+            background: #f8f9fa;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .navbar {
+                display: none;
+            }
+
+            .print-btn {
+                display: none;
+            }
+
+            .ticket {
+                max-width: 100%;
+                margin: 0;
+                box-shadow: none;
+            }
+
+            @page {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .ticket-body {
+                padding: 20px;
+            }
+
+            .journey-section {
+                margin-bottom: 20px;
+            }
+
+            .location-code {
+                font-size: 24px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="navbar-left">
+        <button class="back-btn" onclick="kembaliKePesanan()">←</button>
+        <div style="color: white; font-size: 20px; font-weight: bold;">Tiket Perjalanan</div>
+    </div>
+    <button class="print-btn" onclick="window.print()">🖨️ Cetak</button>
+</div>
+
+<div class="ticket-container">
+    <div class="ticket">
+        <!-- TICKET HEADER -->
+        <div class="ticket-header">
+            <div class="airline-name">✈️ GO TRIP TICKET</div>
+            <div class="ticket-title">E-Ticket Perjalanan</div>
+            <div class="divider"></div>
+            <div class="ticket-code">
+                <div class="ticket-code-label">Kode Pesanan</div>
+                <div class="ticket-code-value" id="code-pesanan">-</div>
+            </div>
+        </div>
+
+        <!-- TICKET BODY -->
+        <div class="ticket-body">
+            <!-- JOURNEY -->
+            <div class="journey-section" id="journey-section">
+                <!-- Akan di-isi dari JS -->
+            </div>
+
+            <!-- INFO -->
+            <div class="info-grid" id="info-grid">
+                <!-- Akan di-isi dari JS -->
+            </div>
+
+            <!-- PASSENGER -->
+            <div class="passenger-section">
+                <div class="passenger-label">Nama Penumpang</div>
+                <div class="passenger-name" id="passenger-name">-</div>
+            </div>
+
+            <!-- PRICE -->
+            <div class="price-section">
+                <div class="price-label">Total Pembayaran</div>
+                <div class="price-value" id="ticket-price">Rp -</div>
+            </div>
+
+            <!-- QR CODE -->
+            <div class="qr-section">
+                <div class="qr-code" id="qr-code">
+                    📱 QR Code
+                </div>
+                <div class="qr-instruction">Tunjukkan QR Code ini saat naik Shuttle</div>
+            </div>
+
+            <!-- STATUS -->
+            <div style="text-align: center;">
+                <div class="status-badge">✓ TIKET AKTIF</div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="ticket-footer">
+            Terima kasih telah menggunakan GO TRIP | www.gotripapp.com
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    function loadTiket() {
+        const tiketData = JSON.parse(localStorage.getItem('tiketAktif'));
+        
+        if (!tiketData) {
+            document.body.innerHTML = '<h2 style="text-align: center; margin-top: 50px;">Tiket tidak ditemukan</h2>';
+            return;
+        }
+
+        // Kode Pesanan
+        document.getElementById('code-pesanan').textContent = tiketData.kode_pesanan;
+
+        // Journey Section
+        const journeyHTML = `
+            <div class="location">
+                <div class="location-code">${tiketData.dari.substring(0, 3).toUpperCase()}</div>
+                <div class="location-name">${tiketData.dari}</div>
+                <div class="location-time">${tiketData.jam_berangkat}</div>
+            </div>
+            <div class="journey-arrow">
+                <div class="arrow-line">→</div>
+                <div class="duration">${tiketData.durasi || '3 jam'}</div>
+            </div>
+            <div class="location">
+                <div class="location-code">${tiketData.tujuan.substring(0, 3).toUpperCase()}</div>
+                <div class="location-name">${tiketData.tujuan}</div>
+                <div class="location-time">${tiketData.jam_tiba}</div>
+            </div>
+        `;
+        document.getElementById('journey-section').innerHTML = journeyHTML;
+
+        // Info Grid
+        const infoHTML = `
+            <div class="info-item">
+                <div class="info-label">📅 Tanggal Berangkat</div>
+                <div class="info-value">${tiketData.tanggal}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">💺 Nomor Kursi</div>
+                <div class="info-value">${tiketData.kursi}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">📱 Nomor Telepon</div>
+                <div class="info-value">${tiketData.telp || '-'}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">📧 Email</div>
+                <div class="info-value">${tiketData.email || '-'}</div>
+            </div>
+        `;
+        document.getElementById('info-grid').innerHTML = infoHTML;
+
+        // Passenger Name
+        document.getElementById('passenger-name').textContent = tiketData.nama || tiketData.dari + ' - ' + tiketData.tujuan;
+
+        // Price
+        const finalPrice = tiketData.harga_final || tiketData.harga || 0;
+        document.getElementById('ticket-price').textContent = 'Rp ' + finalPrice.toLocaleString('id-ID');
+
+        // Generate QR Code
+        const qrText = `${tiketData.kode_pesanan}|${tiketData.nama}|${tiketData.kursi}`;
+        const qrElement = document.getElementById('qr-code');
+        qrElement.innerHTML = '';
+        new QRCode(qrElement, {
+            text: qrText,
+            width: 180,
+            height: 180,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    function kembaliKePesanan() {
+        window.location.href = "pesanan.html";
+    }
+
+    // Load tiket saat halaman dibuka
+    window.onload = loadTiket;
+</script>
+</body>
+</html>

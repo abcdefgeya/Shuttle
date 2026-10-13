@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akun Saya</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+
+        .navbar {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .navbar-title {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .akun-container {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .akun-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .profile-status {
+            color: #28a745;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-value.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .btn-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-edit:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-logout {
+            background: #dc3545;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            .akun-card {
+                padding: 25px;
+            }
+
+            .profile-avatar {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+
+            .profile-name {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body onload="loadAkunData()">
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="navbar-left">
+        <button class="back-btn" onclick="kembaliKeMenu()">←</button>
+        <div class="navbar-title">Akun Saya</div>
+    </div>
+</div>
+
+<!-- AKUN CONTAINER -->
+<div class="akun-container">
+    <div class="akun-card">
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name" id="profile-nama">-</div>
+            <div class="profile-status">✓ Akun Aktif</div>
+        </div>
+
+        <!-- INFO PERSONAL -->
+        <div class="info-section">
+            <div class="info-label">📧 Email / No. WhatsApp</div>
+            <div class="info-value" id="info-identifier">-</div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-label">📱 Nomor Telepon</div>
+            <div class="info-value" id="info-telp">Belum ditambahkan</div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-label">📧 Email</div>
+            <div class="info-value" id="info-email">Belum ditambahkan</div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-label">📅 Tanggal Bergabung</div>
+            <div class="info-value" id="info-bergabung">2024</div>
+        </div>
+
+        <!-- STATISTIK -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number" id="stat-pesanan">0</div>
+                <div class="stat-label">Total Pesanan</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-pembayaran">Rp 0</div>
+                <div class="stat-label">Total Pembayaran</div>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="btn-container">
+            <button class="btn-edit" onclick="editAkun()">✏️ Edit Profil</button>
+            <button class="btn-logout" onclick="logoutAkun()">🚪 Logout</button>
+        </div>
+    </div>
+</div>
+
+<script src="../app.js"></script>
+<script>
+    function loadAkunData() {
+        const currentUser = localStorage.getItem('currentUser');
+        const pesanan = JSON.parse(localStorage.getItem('pesanan')) || [];
+        
+        if (!currentUser) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        // Tampilkan username/email
+        document.getElementById('profile-nama').textContent = currentUser;
+        document.getElementById('info-identifier').textContent = currentUser;
+
+        // Hitung statistik pesanan
+        const pesananUser = pesanan.filter(p => p.status === 'paid');
+        let totalPembayaran = 0;
+        
+        pesananUser.forEach(p => {
+            totalPembayaran += p.harga_final || p.harga || 0;
+        });
+
+        document.getElementById('stat-pesanan').textContent = pesananUser.length;
+        document.getElementById('stat-pembayaran').textContent = 
+            'Rp ' + totalPembayaran.toLocaleString('id-ID');
+
+        // Tampilkan info tambahan jika ada
+        const lastPesanan = pesananUser.length > 0 ? pesananUser[pesananUser.length - 1] : null;
+        if (lastPesanan && lastPesanan.telp) {
+            document.getElementById('info-telp').textContent = lastPesanan.telp;
+        }
+        if (lastPesanan && lastPesanan.email) {
+            document.getElementById('info-email').textContent = lastPesanan.email;
+        }
+    }
+
+    function kembaliKeMenu() {
+        window.location.href = "index.html";
+    }
+
+    function editAkun() {
+        alert("Fitur edit profil sedang dikembangkan. Hubungi customer service untuk perubahan data.");
+    }
+
+    function logoutAkun() {
+        if (confirm("Apakah Anda yakin ingin logout?")) {
+            localStorage.removeItem('currentUser');
+            window.location.href = "login.html";
+        }
+    }
+</script>
+</body>
+</html>

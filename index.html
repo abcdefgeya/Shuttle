@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Utama - Pesan Tiket</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar {
+            position: relative;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            width: 220px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .menu-dropdown.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-dropdown a, .menu-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .menu-dropdown a:last-child, .menu-dropdown button:last-child {
+            border-bottom: none;
+        }
+
+        .menu-dropdown a:hover, .menu-dropdown button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* MAIN CONTAINER */
+        .booking-container {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .booking-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .booking-card h2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* RESERVASI SECTION */
+        .reservasi-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid #667eea;
+        }
+
+        .reservasi-section h3 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .reservasi-section button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .reservasi-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* LOKASI SHUTTLE */
+        .lokasi-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .lokasi-section h3 {
+            color: #333;
+            margin-top: 0;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .lokasi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .lokasi-card {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            overflow: hidden;
+            height: 150px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .lokasi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .lokasi-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .lokasi-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 10px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .lokasi-card:hover .lokasi-card-overlay {
+            background: rgba(102, 126, 234, 0.6);
+        }
+
+        /* BANTUAN */
+        .bantuan-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+
+        .bantuan-section h3 {
+            color: #667eea;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+
+        .bantuan-emoji {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 28px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .bantuan-emoji:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 600px) {
+            .booking-card {
+                padding: 25px;
+            }
+
+            .lokasi-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+            }
+
+            .lokasi-card {
+                height: 120px;
+            }
+
+            .lokasi-card-overlay {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body onload="cekLogin()">
+
+<!-- NAVBAR DENGAN MENU -->
+<div class="navbar">
+    <div class="logo">🚐 GO TRIP</div>
+    <button class="menu-toggle" onclick="toggleMenu()">⋮</button>
+    <div class="menu-dropdown" id="menu">
+        <a href="../templates/home.html" onclick="goHome()">🏠 Kembali ke Awal</a>
+        <a href="#" onclick="goPesanan()">📝 Pesanan Saya</a>
+        <a href="#" onclick="goInbox()">📬 Inbox</a>
+        <a href="#" onclick="goAkun()">👤 Akun Saya</a>
+        <button onclick="logout()">🚪 Logout</button>
+    </div>
+</div>
+
+<!-- MAIN BOOKING SECTION -->
+<div class="booking-container">
+    <div class="booking-card">
+        <!-- RESERVASI CEPAT -->
+        <div class="reservasi-section">
+            <h3 onclick="toggleCekTiket()" style="cursor: pointer;">📋 Sudah Reservasi Online?</h3>
+        </div>
+
+        <!-- MODAL CEK TIKET -->
+        <div id="modal-cek-tiket" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; z-index: 1000;"></div>
+        <div id="cek-tiket-modal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 380px; background: white; border-radius: 15px; padding: 30px 20px; display: none; z-index: 1001; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <button onclick="toggleCekTiket()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">✕</button>
+            <h2 style="margin-top: 0; margin-bottom: 20px; color: #667eea; text-align: center;">Cek Tiket</h2>
+            <input 
+                type="text" 
+                id="cek-kode" 
+                placeholder="Masukkan kode tiket" 
+                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; margin-bottom: 15px;"
+                onkeypress="if(event.key==='Enter') cariTiketUtama()"
+            >
+            <button onclick="cariTiketUtama()" style="width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;">Cari Tiket</button>
+            <div id="cek-error" style="color: #dc3545; font-size: 13px; margin-top: 15px; display: none; text-align: center;"></div>
+            <div id="cek-success" style="color: #28a745; font-size: 13px; margin-top: 15px; display: none; text-align: center;"></div>
+        </div>
+
+        <!-- FORM PEMESANAN -->
+        <h2>Pesan Tiket Shuttle</h2>
+
+        <div class="form-group">
+            <label for="asal">Dari Mana:</label>
+            <select id="asal">
+                <option value="">Pilih Kota Asal</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Surabaya</option>
+                <option>Sukabumi</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tujuan">Tujuan:</label>
+            <select id="tujuan">
+                <option value="">Pilih Kota Tujuan</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Surabaya</option>
+                <option>Sukabumi</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="tanggal">Tanggal Pergi:</label>
+            <input type="date" id="tanggal">
+        </div>
+
+        <button class="btn-search" onclick="cariJadwal()">🔍 Cari Jadwal</button>
+
+        <!-- BANTUAN -->
+        <div class="bantuan-section">
+            <h3>butuh bntuan ?</h3>
+            <button class="bantuan-emoji" onclick="window.open('https://wa.me/6281234567890', '_blank')" title="Chat WhatsApp">💬</button>
+        </div>
+
+        <!-- PILIH LOKASI SHUTTLE -->
+        <div class="lokasi-section">
+            <h3>📍 Pilih Point Shuttle Kami</h3>
+            <div class="lokasi-grid">
+                <div class="lokasi-card" onclick="pilihLokasi('Jakarta')">
+                    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=300" alt="Jakarta">
+                    <div class="lokasi-card-overlay">Jakarta</div>
+                </div>
+                <div class="lokasi-card" onclick="pilihLokasi('Bandung')">
+                    <img src="https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=300" alt="Bandung">
+                    <div class="lokasi-card-overlay">Bandung</div>
+                </div>
+                <div class="lokasi-card" onclick="pilihLokasi('Surabaya')">
+                    <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300" alt="Surabaya">
+                    <div class="lokasi-card-overlay">Surabaya</div>
+                </div>
+                <div class="lokasi-card" onclick="pilihLokasi('Sukabumi')">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300" alt="Sukabumi">
+                    <div class="lokasi-card-overlay">Sukabumi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../app.js"></script>
+</body>
+</html>
